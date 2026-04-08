@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Temporizador AN</title>
+
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    input {
+      width: 60px;
+      padding: 10px;
+      font-size: 18px;
+      text-align: center;
+      margin: 5px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #display {
+      font-size: 48px;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Temporizador</h1>
+
+  <div>
+    <input id="hours" type="number" placeholder="HH" min="0">
+    <input id="minutes" type="number" placeholder="MM" min="0">
+    <input id="seconds" type="number" placeholder="SS" min="0">
+  </div>
+
+  <div>
+    <button onclick="startTimer()">Iniciar</button>
+    <button onclick="resetTimer()">Reset</button>
+  </div>
+
+  <div id="display">00:00:00</div>
+
+  <script>
+    let totalSeconds = 0;
+    let interval;
+
+    function startTimer() {
+      clearInterval(interval);
+
+      const h = parseInt(document.getElementById("hours").value) || 0;
+      const m = parseInt(document.getElementById("minutes").value) || 0;
+      const s = parseInt(document.getElementById("seconds").value) || 0;
+
+      totalSeconds = h * 3600 + m * 60 + s;
+
+      interval = setInterval(() => {
+        if (totalSeconds <= 0) {
+          clearInterval(interval);
+          alert("Tiempo terminado");
+          return;
+        }
+
+        totalSeconds--;
+
+        let hrs = Math.floor(totalSeconds / 3600);
+        let mins = Math.floor((totalSeconds % 3600) / 60);
+        let secs = totalSeconds % 60;
+
+        document.getElementById("display").textContent =
+          String(hrs).padStart(2, '0') + ":" +
+          String(mins).padStart(2, '0') + ":" +
+          String(secs).padStart(2, '0');
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(interval);
+      totalSeconds = 0;
+      document.getElementById("display").textContent = "00:00:00";
+    }
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+
+</body>
+</html>
